@@ -1,137 +1,69 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
 	Logic "github.com/siredmar/connect-four-go/internal/logic"
 	Player "github.com/siredmar/connect-four-go/internal/player"
 )
 
+var (
+	currentPlayer int
+)
+
 func main() {
 
-	P1 := Player.CreatePlayer("Player 1", "X")
-	P2 := Player.CreatePlayer("Player 2", "O")
+	currentPlayer = 0
 
 	var players []Player.Player
-	players = append(players, P1, P2)
-	fmt.Println(players)
+	players = append(players, Player.CreatePlayer("", "X"), Player.CreatePlayer("", "0"))
+
+	players[0].Name = userInput("Player 1, enter you name: ")
+	players[1].Name = userInput("Player 2, enter you name: ")
+
 	l := Logic.Create()
 	l.Init(8, 8)
-
-	l.InsertCoin(players[0], 0)
-	l.InsertCoin(players[1], 1)
-	l.InsertCoin(players[0], 2)
-	l.InsertCoin(players[0], 3)
-	l.InsertCoin(players[0], 2)
-	l.InsertCoin(players[0], 3)
-	l.InsertCoin(players[0], 3)
-	l.InsertCoin(players[1], 1)
-	l.InsertCoin(players[1], 2)
-	l.InsertCoin(players[1], 3)
-	l.InsertCoin(players[0], 4)
-	l.InsertCoin(players[1], 4)
-	l.InsertCoin(players[1], 4)
-	l.InsertCoin(players[1], 4)
-	l.InsertCoin(players[1], 4)
 	l.Print()
-	fmt.Println("Win: ", l.Check(players[1]))
-	// var s bool
-	// var err error
-	// s, err = l.InsertCoin(players[1], 0)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// fmt.Println("Win: ", l.Check(P1))
+	for {
+		var column int
+		for {
+			fmt.Printf("%v, column: ", players[currentPlayer].Name)
+			fmt.Scanf("%d", &column)
+			r, err := l.InsertCoin(players[currentPlayer], column)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if r == true {
+				break
+			}
+		}
+		l.Print()
+		if l.Check(players[currentPlayer]) == true {
+			fmt.Println(players[currentPlayer].Name, "won!")
+			break
+		}
+		switchCurrentPlayer()
+	}
+}
 
-	// s, err = l.InsertCoin(players[0], 1)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// fmt.Println("Win: ", l.Check(P1))
-	// s, err = l.InsertCoin(players[0], 2)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// fmt.Println("Win: ", l.Check(P1))
-	// s, err = l.InsertCoin(players[0], 3)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// fmt.Println("Win: ", l.Check(P1))
-	// s, err = l.InsertCoin(players[0], 4)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// fmt.Println("Win: ", l.Check(P1))
-	// s, err = l.InsertCoin(players[0], 7)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// s, err = l.InsertCoin(players[0], 7)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// s, err = l.InsertCoin(players[0], 7)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-	// s, err = l.InsertCoin(players[0], 7)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
+func switchCurrentPlayer() {
+	if currentPlayer == 0 {
+		currentPlayer = 1
+	} else {
+		currentPlayer = 0
+	}
+}
 
-	// s, err = l.InsertCoin(players[0], 1)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
+func userInput(prompt string) string {
+	reader := bufio.NewReader(os.Stdin)
+	if prompt != "" {
+		fmt.Print(prompt)
+	}
+	text, _ := reader.ReadString('\n')
+	text = strings.Trim(text, "\n")
+	return text
 
-	// s, err = l.InsertCoin(players[1], 1)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-
-	// s, err = l.InsertCoin(players[1], 2)
-	// if err != nil {
-	// 	fmt.Println(s, err)
-	// } else {
-	// 	fmt.Println(s)
-	// 	l.Print()
-	// }
-
-	// l.Rotate()
-	// l.Print()
-	// fmt.Println("Win: ", l.Check(P1))
 }
