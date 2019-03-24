@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	Logic "github.com/siredmar/connect-four/internal/logic"
-	Player "github.com/siredmar/connect-four/internal/player"
+	Logic "github.com/siredmar/connect-four-go/internal/logic"
+	Player "github.com/siredmar/connect-four-go/internal/player"
 )
 
 func main() {
@@ -17,13 +17,9 @@ func main() {
 	fmt.Println(players)
 	l := Logic.Create()
 	l.Init(8, 8)
-	s, err := l.InsertCoin(players[0], 0)
-	if err != nil {
-		fmt.Println(s, err)
-	} else {
-		fmt.Println(s)
-		l.Print()
-	}
+
+	var s bool
+	var err error
 
 	s, err = l.InsertCoin(players[0], 7)
 	if err != nil {

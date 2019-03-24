@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"math"
 
-	Player "github.com/siredmar/connect-four/internal/player"
+	Player "github.com/siredmar/connect-four-go/internal/player"
 )
 
 var (
 	xMax = 8
-	yMax = 8 // y + 1: 1 is for hidden and used for limit checks
+	yMax = 8
 )
 
 type Logic struct {
@@ -57,7 +57,7 @@ func (l Logic) Print() {
 		fmt.Printf("%v", i)
 	}
 	fmt.Println()
-	for y := yMax - 2; y >= 0; y-- {
+	for y := yMax - 1; y >= 0; y-- {
 		fmt.Printf("%v ", y)
 		for x := 0; x < xMax; x++ {
 			fmt.Printf("%v", l.board[y][x])
@@ -69,13 +69,14 @@ func (l Logic) Print() {
 func (l Logic) getLastYPosition(x int) (int, error) {
 	position := yMax - 1
 	for y := yMax - 1; y >= 0; y-- {
+		position = y
 		if l.board[y][x] != "." {
+			position++
 			break
 		}
-		position = y
 
 	}
-	if position >= yMax-1 {
+	if position >= yMax {
 		return -1, fmt.Errorf("Column already filled up with coins")
 	} else {
 		return position, nil
