@@ -106,7 +106,7 @@ func (l *Logic) Init(x, y int) {
 // Print prints the board at its current state
 func (l Logic) Print() {
 	fmt.Printf("  ")
-	for i := 0; i < xMax; i++ {
+	for i := 1; i <= xMax; i++ {
 		fmt.Printf("%v", i)
 	}
 	fmt.Println()
@@ -117,6 +117,7 @@ func (l Logic) Print() {
 		}
 		fmt.Println()
 	}
+	fmt.Println()
 }
 
 func (l Logic) getLastYPosition(x int) (int, error) {
@@ -137,7 +138,7 @@ func (l Logic) getLastYPosition(x int) (int, error) {
 
 // InsertCoin lets a given player insert a coin in a specific column of the board
 func (l *Logic) InsertCoin(p Player.Player, x int) (bool, error) {
-	if x > xMax {
+	if x >= xMax || x < 0 {
 		return false, fmt.Errorf("x bigger than maximum board size: %v", xMax)
 	}
 	lastYPosition, err := l.getLastYPosition(x)

@@ -23,7 +23,7 @@ func main() {
 
 	players[0].Name = userInput("Player 1, enter you name: ")
 	players[1].Name = userInput("Player 2, enter you name: ")
-
+	fmt.Println(players[currentPlayer].Name, "begins. Your sign is:", players[currentPlayer].Sign)
 	l := Logic.Create()
 	l.Init(8, 8)
 	l.Print()
@@ -32,7 +32,8 @@ func main() {
 		for {
 			fmt.Printf("%v, column: ", players[currentPlayer].Name)
 			fmt.Scanf("%d", &column)
-			r, err := l.InsertCoin(players[currentPlayer], column)
+			// column-1 to compensate for beginning counting at zero
+			r, err := l.InsertCoin(players[currentPlayer], column-1)
 			if err != nil {
 				fmt.Println(err)
 			}
