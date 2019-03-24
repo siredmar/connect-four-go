@@ -8,22 +8,24 @@ import (
 )
 
 var (
-	xMax = 8
-	yMax = 8
+	xMax        = 8
+	yMax        = 8
+	numWinCoins = 4
 )
 
 type Logic struct {
 	board [][]string
 }
 
+// Create makes an instance of the Logic struct and returns it
 func Create() Logic {
 	return Logic{}
 }
 
-// Rotate rotates the board to prepare the board for a diagonal win check
-// based on information from:
+// Rotate rotates the board to prepare the board for a horizontal/vertical/diagonal winning check
+// Algorithm based on information from:
 // https://code.likeagirl.io/rotate-an-2d-matrix-90-degree-clockwise-without-create-another-array-49209ea8b6e6
-func (l Logic) Rotate() {
+func (l Logic) rotate() {
 	n := len(l.board)
 	x := int(math.Floor(float64(n) / 2))
 	y := n - 1
@@ -38,6 +40,57 @@ func (l Logic) Rotate() {
 	}
 }
 
+// Check checks if the a given player won the game
+func (l Logic) Check(p Player.Player) bool {
+	win := false
+	// We are rotating the board to make simple winning check functions.
+	// Rotate the board 4 times. On each rotation the winning checks are performed.
+	// On the last rotation the board is back in its original state.
+	for r := 0; r < 4; r++ {
+		if l.checkHorizontal(p) == true || l.checkDiagonal(p) == true {
+			win = true
+		}
+		l.rotate()
+	}
+	return win
+}
+
+func (l Logic) checkHorizontal(p Player.Player) bool {
+	for y := 0; y < yMax; y++ {
+		connectedCoins := 0
+		for x := 0; x < xMax-numWinCoins; x++ {
+			for c := x; c < x+numWinCoins; c++ {
+				if l.board[y][c] == p.Sign {
+					connectedCoins++
+				}
+			}
+			if connectedCoins >= numWinCoins {
+				return true
+			}
+			connectedCoins = 0
+		}
+	}
+	return false
+}
+
+func (l Logic) checkDiagonal(p Player.Player) bool {
+	for y := 0; y < yMax-numWinCoins; y++ {
+		for x := 0; x < xMax-numWinCoins; x++ {
+			connectedCoins := 0
+			for c := 0; c < numWinCoins; c++ {
+				if l.board[y+c][x+c] == p.Sign {
+					connectedCoins++
+				}
+			}
+			if connectedCoins >= numWinCoins {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// Init makes the board an initializes to default values
 func (l *Logic) Init(x, y int) {
 	l.board = make([][]string, yMax)
 	for y := range l.board {
@@ -47,10 +100,10 @@ func (l *Logic) Init(x, y int) {
 		for x := 0; x < xMax; x++ {
 			l.board[y][x] = "."
 		}
-
 	}
 }
 
+// Print prints the board at its current state
 func (l Logic) Print() {
 	fmt.Printf("  ")
 	for i := 0; i < xMax; i++ {
@@ -74,7 +127,6 @@ func (l Logic) getLastYPosition(x int) (int, error) {
 			position++
 			break
 		}
-
 	}
 	if position >= yMax {
 		return -1, fmt.Errorf("Column already filled up with coins")
@@ -83,6 +135,7 @@ func (l Logic) getLastYPosition(x int) (int, error) {
 	}
 }
 
+// InsertCoin lets a given player insert a coin in a specific column of the board
 func (l *Logic) InsertCoin(p Player.Player, x int) (bool, error) {
 	if x > xMax {
 		return false, fmt.Errorf("x bigger than maximum board size: %v", xMax)
