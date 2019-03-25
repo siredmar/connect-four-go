@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	xMax        = 8
-	yMax        = 8
+	xMax        int
+	yMax        int
 	numWinCoins = 4
 )
 
@@ -92,6 +92,8 @@ func (l Logic) checkDiagonal(p Player.Player) bool {
 
 // Init makes the board an initializes to default values
 func (l *Logic) Init(x, y int) {
+	xMax = x
+	yMax = y
 	l.board = make([][]string, yMax)
 	for y := range l.board {
 		l.board[y] = make([]string, xMax)
